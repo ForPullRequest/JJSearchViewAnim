@@ -8,18 +8,19 @@ import android.graphics.RectF;
 import com.cjj.sva.anim.JJBaseController;
 
 /**
- * 这是一个神奇的类，searchview释放外面的圈圈，呼吸新鲜空气！
- *
- * Created by androidcjj on 2016/4/2.
+ * Created by Kerchin on 2016/4/25 0025.
+ * 稍微修改了一下JJCircleToLineAlphaController
+ * 使得搜索突变变成了叉叉
  */
-public class JJCircleToLineAlphaController extends JJBaseController {
+public class HKQCircleToClearLineController extends JJBaseController {
     private String mColor = "#673AB7";
     private int cx, cy, cr;
     private RectF mRectF, mRectFLarge;
     private float tran = 200;
-    private static int mGap = 3;
+    private static float mGap = 2.5f;
+    private int widthRatio = 2;//用于高度固定 长度match_parent的场景
 
-    public JJCircleToLineAlphaController() {
+    public HKQCircleToClearLineController() {
         mRectF = new RectF();
         mRectFLarge = new RectF();
     }
@@ -50,13 +51,45 @@ public class JJCircleToLineAlphaController extends JJBaseController {
     }
 
     private void drawStartAnimView(Paint paint, Canvas canvas) {
-        canvas.save();
-        canvas.rotate(45, mRectF.centerX(), mRectF.centerY());
-        canvas.drawLine(mRectF.centerX() + cr, mRectF.centerY(), mRectF.centerX() + (cr * 2), mRectF.centerY(), paint);
+        canvas.save();//只讲旋转应用在线上
+        canvas.rotate(45, mRectF.centerX(), mRectF.centerY());//旋转
+        //先画横线先把横线缩短
+        canvas.drawLine(mRectF.centerX() + cr
+                , mRectF.centerY()
+                , mRectF.centerX() + cr + (cr * (1 - mPro))
+                , mRectF.centerY(), paint);
+        //交叉中的横线
+        if (mPro >= 0.5f)
+            //再画交叉中的竖线后0.5mPro才开始画
+            if (mPro >= 0.5f && mPro < 1.0f) {
+                canvas.drawLine(mRectF.centerX()
+                        , mRectF.centerY() - (cr * 2 * (mPro - 0.5f))
+                        , mRectF.centerX()
+                        , mRectF.centerY() + (cr * 2 * (mPro - 0.5f)), paint);
+                canvas.drawLine(mRectF.centerX() - cr * 2 * (mPro - 0.5f)
+                        , mRectF.centerY()
+                        , mRectF.centerX() + (cr * 2 * (mPro - 0.5f))
+                        , mRectF.centerY(), paint);
+            } else if (mPro == 1.0f) {
+                canvas.drawLine(mRectF.centerX()
+                        , mRectF.centerY() - cr
+                        , mRectF.centerX()
+                        , mRectF.centerY() + cr, paint);
+                canvas.drawLine(mRectF.centerX() - cr
+                        , mRectF.centerY()
+                        , mRectF.centerX() + cr
+                        , mRectF.centerY(), paint);
+            }
+        if (mPro != 1.0f)
+            canvas.drawArc(mRectF, 0, (360) * (1 - mPro), false, paint);//圆
         canvas.restore();
-        canvas.drawArc(mRectF, 0, 360, false, paint);
-        canvas.drawArc(mRectFLarge, 90, -360 * (1 - mPro), false, paint);
-        if (mPro >= 0.4f && mPro < 1.0f) {
+//        RectF mRectFCircle = new RectF(mRectF);
+//        mRectFCircle.top -= 10;
+//        mRectFCircle.left -= 10;
+//        mRectFCircle.right += 10;
+//        mRectFCircle.bottom += 10;
+        canvas.drawArc(mRectFLarge, 90, -360 * (1 - mPro), false, paint);//圆外的线随时间逐渐缩短
+        if (mPro >= 0f && mPro < 1.0f) {
             canvas.drawLine(mRectFLarge.left * (1 - mPro) + mRectF.width(), mRectFLarge.bottom,
                     (mRectFLarge.right - mGap * cr), mRectFLarge.bottom, paint);
         }
@@ -72,8 +105,8 @@ public class JJCircleToLineAlphaController extends JJBaseController {
 
     private void drawNormalView(Paint paint, Canvas canvas) {
         cr = getWidth() / 30;
-        cx = getWidth() / 2;
-        cy = getHeight() / 2;
+        cx = getWidth() / widthRatio;//居中
+        cy = getHeight() / 2;//居中
         mRectF.left = cx - cr;
         mRectF.right = cx + cr;
         mRectF.top = cy - cr;
@@ -103,7 +136,7 @@ public class JJCircleToLineAlphaController extends JJBaseController {
         if (mState == STATE_ANIM_START) return;
         mState = STATE_ANIM_START;
         startSearchViewAnim();
-        tran = getWidth() / 2 - mRectF.width() * 2;
+        tran = getWidth() / widthRatio * (widthRatio - 1) - mRectF.width() * 2;
     }
 
     @Override

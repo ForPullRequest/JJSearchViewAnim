@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 
 import com.cjj.sva.JJSearchView;
 import com.cjj.sva.anim.controller.JJAroundCircleBornTailController;
@@ -15,15 +16,33 @@ import com.cjj.sva.anim.controller.JJCircleToLineAlphaController;
 import com.cjj.sva.anim.controller.JJCircleToSimpleLineController;
 import com.cjj.sva.anim.controller.JJDotGoPathController;
 import com.cjj.sva.anim.controller.JJScaleCircleAndTailController;
+import com.cjj.sva.widget.CircleSearchView;
 
 public class MainActivity extends AppCompatActivity {
     JJSearchView mJJSearchView;
+    CircleSearchView mEditCircleSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mJJSearchView = (JJSearchView) findViewById(R.id.jjsv);
+        mEditCircleSearch = (CircleSearchView) findViewById(R.id.mEditCircleSearch);
+        mEditCircleSearch.setSearchClick(new CircleSearchView.SearchClickListener() {
+            @Override
+            public void searchClick(EditText editText, String text) {
+                editText.setText("");
+            }
+        });
+        mEditCircleSearch.setUpAndDownClick(new CircleSearchView.UpAndDownListener() {
+            @Override
+            public void upClick() {
+            }
+
+            @Override
+            public void downClick() {
+            }
+        });
         mJJSearchView.setController(new JJChangeArrowController());
     }
 
@@ -48,7 +67,13 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        if(id==R.id.action9) {
+            mJJSearchView.setVisibility(View.GONE);
+            mEditCircleSearch.setVisibility(View.VISIBLE);
+        }else{
+            mJJSearchView.setVisibility(View.VISIBLE);
+            mEditCircleSearch.setVisibility(View.GONE);
+        }
         switch (id) {
             case R.id.action1:
                 mJJSearchView.setController(new JJAroundCircleBornTailController());
@@ -72,6 +97,9 @@ public class MainActivity extends AppCompatActivity {
                 mJJSearchView.setController(new JJDotGoPathController());
                 break;
             case R.id.action8:
+                mJJSearchView.setController(new JJScaleCircleAndTailController());
+                break;
+            case R.id.action9:
                 mJJSearchView.setController(new JJScaleCircleAndTailController());
                 break;
         }

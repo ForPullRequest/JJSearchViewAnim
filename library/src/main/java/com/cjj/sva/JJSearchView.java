@@ -12,7 +12,7 @@ import com.cjj.sva.anim.controller.JJChangeArrowController;
 
 /**
  * 这是一个神奇的类，今天心情郁闷
- * <p>
+ * <p/>
  * Created by androidcjj on 2016/4/1.
  */
 public class JJSearchView extends View {
@@ -67,4 +67,10 @@ public class JJSearchView extends View {
             mController.resetAnim();
     }
 
+    public int getState() {
+        if (mController != null) {
+            return mController.getState();
+        }
+        return JJBaseController.STATE_ANIM_NONE;
+    }
 }

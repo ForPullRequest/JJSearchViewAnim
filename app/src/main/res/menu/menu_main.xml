@@ -18,6 +18,10 @@
           android:orderInCategory="100"
           android:title="JJScaleCircleAndTailController"
           app:showAsAction="never"/>
+    <item android:id="@+id/action9"
+        android:orderInCategory="100"
+        android:title="CircleSearchView"
+        app:showAsAction="never"/>
     <item android:id="@+id/action3"
           android:orderInCategory="100"
           android:title="JJChangeArrowController"
